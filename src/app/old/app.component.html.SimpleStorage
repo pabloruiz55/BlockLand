@@ -1,0 +1,11 @@
+Stored: {{storage}}
+
+<button (click)="updateStorage(10)" type="button" class="btn btn-primary">Update to 10</button>
+<button (click)="updateStorage(20)" type="button" class="btn btn-primary">Update to 20</button>
+<button (click)="updateStorage(30)" type="button" class="btn btn-primary">Update to 30</button>
+<button (click)="refreshStorage()" type="button" class="btn btn-primary">Refresh</button>
+
+<hr>
+
+<button (click)="payContract()" type="button" name="button">Pay 1 ether</button>
+<button (click)="getContractBalance()" type="button" name="button">Get contract ether balance</button>

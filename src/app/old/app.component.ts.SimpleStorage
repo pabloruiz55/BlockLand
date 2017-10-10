@@ -1,0 +1,200 @@
+import { Component, HostListener, NgZone } from '@angular/core';
+const Web3 = require('web3');
+const contract = require('truffle-contract');
+const simplestorageArtifacts = require('../../build/contracts/SimpleStorage.json');
+import { canBeNumber } from '../util/validation';
+
+declare var window: any;
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent {
+  //MetaCoin = contract(metaincoinArtifacts);
+  SimpleStorage = contract(simplestorageArtifacts);
+
+  // TODO add proper types these variables
+  account: any;
+  accounts: any;
+  web3: any;
+
+  storage: number = 0;
+  amountToStore: number;
+  //balance: number;
+  //sendingAmount: number;
+  //recipientAddress: string;
+  status: string;
+  canBeNumber = canBeNumber;
+  canSignETHTransactions:boolean = false;
+
+  constructor(private _ngZone: NgZone) {
+
+  }
+
+  @HostListener('window:load')
+  windowLoaded() {
+    this.checkAndInstantiateWeb3();
+    this.onReady();
+  }
+
+  checkAndInstantiateWeb3 = () => {
+    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+    if (typeof window.web3 !== 'undefined') {
+      console.warn(
+        'Using web3 detected from external source. If you find that your accounts don\'t appear or you have 0 MetaCoin, ensure you\'ve configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask'
+      );
+      // Use Mist/MetaMask's provider
+      this.web3 = new Web3(window.web3.currentProvider);
+      this.canSignETHTransactions = true;
+    } else {
+      console.warn(
+        'No web3 detected, falling back to Infura Ropsten'
+        //'No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it\'s inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask'
+      );
+      // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+      this.web3 = new Web3(
+        //new Web3.providers.HttpProvider('http://localhost:8545')
+        new Web3.providers.HttpProvider('https://ropsten.infura.io/kUB300IO3nUP3tXCxG6P')
+
+      );
+    }
+  };
+
+  onReady = () => {
+    // Bootstrap the MetaCoin abstraction for Use.
+    this.SimpleStorage.setProvider(this.web3.currentProvider);
+
+    // Get the initial account balance so it can be displayed.
+    this.web3.eth.getAccounts((err, accs) => {
+      if (err != null) {
+        alert('There was an error fetching your accounts.');
+        return;
+      }
+
+      if (accs.length === 0) {
+        alert(
+          'Couldn\'t get any accounts! Make sure your Ethereum client is configured correctly.'
+        );
+        return;
+      }
+      this.accounts = accs;
+      console.log("cuentas: ",this.accounts);
+      this.account = this.accounts[0];
+
+      // This is run from window:load and ZoneJS is not aware of it we
+      // need to use _ngZone.run() so that the UI updates on promise resolution
+      this._ngZone.run(() =>
+        this.refreshStorage()
+        //console.log("aa")
+      );
+    });
+    // This is run from window:load and ZoneJS is not aware of it we
+    // need to use _ngZone.run() so that the UI updates on promise resolution
+    this._ngZone.run(() =>
+      this.refreshStorage()
+      //console.log("aa")
+    );
+  };
+
+
+    setStatus = message => {
+      this.status = message;
+    };
+
+  refreshStorage(){
+    let ss;
+    this.SimpleStorage
+    .deployed()
+    .then(instance =>{
+      ss = instance;
+      return ss.get.call({
+        from: this.account
+      });
+    })
+    .then(value => {
+      console.log(this.storage);
+      console.log(value);
+      this.storage = value.toNumber();
+      console.log(this.storage);
+    })
+    .catch(e => {
+      console.log(e);
+      this.setStatus('Error getting balance; see log.');
+    });
+  }
+
+  updateStorage(amount:Number = 10){
+    if(!this.canSignETHTransactions)return;
+    let ss;
+
+    this.setStatus('Initiating transaction... (please wait)');
+
+    this.SimpleStorage
+      .deployed()
+      .then(instance => {
+        ss = instance;
+        console.log(amount);
+        return ss.set(amount, {
+          from: this.account
+        });
+      })
+      .then(result => {
+        this.setStatus('Transaction complete!');
+        console.log(result);
+        return this.delay(3000);
+      })
+      .then(result=>{
+        console.log("do refresh");
+        this.refreshStorage();
+      })
+      .catch(e => {
+        console.log(e);
+        this.setStatus('Error sending coin; see log.');
+      });
+  };
+
+  getContractBalance(){
+    console.log("C Address:",this.SimpleStorage.address);
+    return this.web3.eth.getBalance(this.SimpleStorage.address, function (error, result) {
+      if (!error) {
+        console.log("C Balance",result.toNumber());
+      } else {
+        console.error(error);
+      }
+    })
+  }
+
+  payContract(){
+    if(!this.canSignETHTransactions)return;
+    let ss;
+
+    this.setStatus('Initiating transaction... (please wait)');
+
+    this.SimpleStorage
+      .deployed()
+      .then(instance => {
+        ss = instance;
+        return ss.payEther(this.SimpleStorage.address, {
+          from: this.account,
+          value: 1000000000000000000
+        });
+      })
+      .then(result => {
+        this.setStatus('Transaction complete!');
+        console.log(result);
+        return this.delay(3000);
+      })
+      .catch(e => {
+        console.log(e);
+        this.setStatus('Error sending ether; see log.');
+      });
+  }
+
+  delay(t:number) {
+   return new Promise(function(resolve) {
+       setTimeout(resolve, t)
+   });
+ }
+
+}

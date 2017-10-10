@@ -1,0 +1,117 @@
+{
+  "contract_name": "SimpleStorage",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "storedData",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "x",
+          "type": "uint256"
+        }
+      ],
+      "name": "set",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "payEther",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": true,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "get",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
+    },
+    {
+      "payable": true,
+      "type": "fallback"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "_prev",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "_storedData",
+          "type": "uint256"
+        }
+      ],
+      "name": "Store",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b6103e76000555b5b6101c4806100276000396000f3006060604052361561005f5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632a1afcd9811461006357806360fe47b1146100885780636c3ec718146100a05780636d4ce63c146100d5575b5b5b005b341561006e57600080fd5b6100766100fa565b60405190815260200160405180910390f35b341561009357600080fd5b61005f600435610100565b005b6100c173ffffffffffffffffffffffffffffffffffffffff60043516610147565b604051901515815260200160405180910390f35b34156100e057600080fd5b610076610191565b60405190815260200160405180910390f35b60005481565b60008054908290557f9d099ce6d9b3a22f142a376553d7664ea1b8cbbad4ea78881bd90eb5b0d3d1fe818360405191825260208201526040908101905180910390a15b5050565b600073ffffffffffffffffffffffffffffffffffffffff82163480156108fc0290604051600060405180830381858888f19350505050151561018857600080fd5b5060015b919050565b6000545b905600a165627a7a723058208ae035d1ac94f6317ee94d618e4759312ca707f1eebacf13c9838c8b0ba5656b0029",
+  "networks": {
+    "3": {
+      "events": {
+        "0x9d099ce6d9b3a22f142a376553d7664ea1b8cbbad4ea78881bd90eb5b0d3d1fe": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "_prev",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "_storedData",
+              "type": "uint256"
+            }
+          ],
+          "name": "Store",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xefdb8578e925c00055092d5cdbb4ea0ba175e350",
+      "updated_at": 1507210498066
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1507210498066
+}

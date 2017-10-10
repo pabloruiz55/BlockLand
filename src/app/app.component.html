@@ -1,0 +1,122 @@
+
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-auto">
+
+      <div *ngIf="landSpace" class="container">
+        <div class="row" *ngFor="let x of landSpace;let i = index" >
+          <div class="col-auto" *ngFor="let y of landSpace[i];let j = index">
+            <!-- <div (click)="buyLand(i,j)" class="land"> -->
+            <div (click)="selectLandSpace(i,j)" class="land"
+            [ngStyle]="{'background-color': (landSpace[i][j].owner !== '0x0000000000000000000000000000000000000000' || landSpace[i][j] === selectedLandSpace) ? landSpace[i][j].color : 'white'}">
+            <!-- <div (click)="buyLand(i,j)" class="land" [ngClass]="{'land-owned' : landSpace[i][j].owner != '0x0000000000000000000000000000000000000000' }"> -->
+              <!-- {{landSpace[i][j].owner}} -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <button (click)="getLandSpace()" type="button" class="btn btn-primary btn-block mt-3">Refresh BlockLand</button>
+
+    </div>
+
+    <div class="col">
+      <h1>Block Inspector</h1>
+      <hr>
+      <ng-container *ngIf="!processingTransaction">
+      <div *ngIf="selectedLandSpace" class="row ml-3">
+        <div class="col">
+          <div class="row">
+            <div class="col-3">
+              Owner:
+            </div>
+            <div class="col-9">
+              <ng-container *ngIf="account === selectedLandSpace.owner"><i style="color:red;">(you) </i></ng-container>{{selectedLandSpace.owner}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              Inscription:
+            </div>
+            <div class="col-9">
+              {{selectedLandSpace.message}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-3">
+              Coordinates:
+            </div>
+            <div class="col-9">
+              ({{selectedLandSpace.x}},{{selectedLandSpace.y}})
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-3">
+              <strong>Current Value:</strong>
+            </div>
+            <div class="col-9">
+              <strong>{{selectedLandSpace.price}} Ether</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button *ngIf="account !== selectedLandSpace.owner" (click)="selectForBuying()" type="button" class="btn btn-primary btn-block mt-3">Buy for {{selectedLandSpace.price}} Ether</button>
+            </div>
+          </div>
+          <ng-container *ngIf="currentAppState == AppStateEnum.SELECTED_FOR_PURCHASE || account === selectedLandSpace.owner ">
+          <form #blockForm="ngForm" (ngSubmit)="onBlockSubmit()" class="mt-3">
+            <div class="form-group row">
+              <label for="inputEmail3" class="col-4 col-form-label">Choose your own inscription:</label>
+              <div class="col">
+                <input [(ngModel)]="selectedLandSpace.message" name="message"
+                 type="text" class="form-control" id="inputEmail3" placeholder="Message">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="inputEmail3" class="col-4 col-form-label">Choose a new color for your block</label>
+              <div class="col">
+                <input [(ngModel)]="selectedLandSpace.color" name="color"
+                 type="text" class="form-control" id="inputEmail3" placeholder="#ffffff">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col">
+                <button *ngIf="account === selectedLandSpace.owner " type="submit" class="btn btn-warning btn-block">Update your block </button>
+                <button *ngIf="account !== selectedLandSpace.owner " type="submit" class="btn btn-warning btn-block">Confirm Purchase for {{selectedLandSpace.price}} Ether </button>
+              </div>
+            </div>
+          </form>
+          </ng-container>
+        </div>
+      </div>
+      <div *ngIf="availableFunds >0" class="row mt-3 ml-3 p-3">
+        <div class="col alert alert-primary">
+          <p>One or more of your blocks have been bought and you have funds available for withdrawal.</p>
+          <p>Available Funds: {{availableFunds}} Ether</p>
+          <button (click)="withdrawFunds()" type="button" class="btn btn-primary">Withdraw {{availableFunds}} Ether</button>
+        </div>
+      </div>
+      <div *ngIf="contractOwner === account && contractOwner?.length>0" class="row mt-3 ml-3 p-3">
+        <div class="col alert alert-danger">
+          <button (click)="moveContractEtherToOwner()" type="button" class="btn btn-primary">Withdraw contract funds</button>
+        </div>
+      </div>
+      </ng-container>
+      <div *ngIf="processingTransaction" class="row ml-3">
+        <p>Processing transaction, please wait...</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- <div class="container">
+  <a-scene embedded>
+    <a-entity position="0 1 -2" scale="10 10 10" text="value: Hello World; color:#000000; align:center;"></a-entity>
+    <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+    <a-sphere position="0 2 -5" radius="1.25" color="#3efdef"></a-sphere>
+    <a-sky color="#ECECEC"></a-sky>
+  </a-scene>
+</div> -->
