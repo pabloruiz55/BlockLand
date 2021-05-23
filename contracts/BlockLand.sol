@@ -22,7 +22,7 @@ contract BlockLand {
         uint _price
     );
 
-    ///asasassdsdsdsd
+    ///asasassdsdsdsdsssss
 
     function BlockLand() payable {
       owner = msg.sender;
