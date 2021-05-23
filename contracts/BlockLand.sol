@@ -1,5 +1,7 @@
 pragma solidity ^0.4.0;
 
+//Test
+
 contract BlockLand {
 
     struct Land {
