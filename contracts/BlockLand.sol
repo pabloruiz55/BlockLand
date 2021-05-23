@@ -22,6 +22,8 @@ contract BlockLand {
         uint _price
     );
 
+    ///asasas
+
     function BlockLand() payable {
       owner = msg.sender;
   	}
